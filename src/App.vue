@@ -2,8 +2,8 @@
   <v-app>
     <v-main>
       <nav>
-        <router-link to="/">Home</router-link> |
-        <router-link to="/create">+</router-link>
+        <router-link to="/">Home</router-link>
+
       </nav>
       <router-view/>
     </v-main>
@@ -29,6 +29,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 }
+
 nav {
   padding: 30px;
 

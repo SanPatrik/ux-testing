@@ -1,4 +1,8 @@
 <template>
+  <nav>
+    <router-link id="nav-router" to="/dashboard">Dashboard</router-link>
+  </nav>
+
   <div class="search-container">
     <div class="field is-grouped">
       <div class="control is-expanded">
@@ -11,7 +15,7 @@
       </div>
     </div>
 
-    <div v-for="city in array"
+    <div ref="test" v-for="city in array"
          v-bind:key="city">
       <TestComp class="mb-5" :city="city" ></TestComp>
     </div>
@@ -22,7 +26,7 @@
 </template>
 
 <script>
-import {defineComponent, ref} from 'vue';
+import {defineComponent, onBeforeMount, ref} from 'vue';
 
 // Components
 import FooterComp from "@/components/FooterComp";
@@ -32,23 +36,6 @@ import { collection, getDocs } from 'firebase/firestore';
 
 const array = ref([]);
 
-
-async function getAllEntities(){
-  const querySnapshot = await getDocs(collection(db, "cities"));
-  let cities = [];
-  querySnapshot.forEach((doc) => {
-    const city = {
-      id: doc.id,
-      country: doc.data().country,
-      name: doc.data().name,
-      state: doc.data().state,
-    }
-    cities.push(city);
-  });
-  array.value = cities;
-
-}
-getAllEntities();
 
 
 // const documentPath = 'cities/LA';
@@ -77,6 +64,23 @@ export default defineComponent({
     FooterComp,
     TestComp,
   },
+  setup(){
+    onBeforeMount(async ()=>{
+      const querySnapshot = await getDocs(collection(db, "cities"));
+      let cities = [];
+      querySnapshot.forEach((doc) => {
+        const city = {
+          id: doc.id,
+          country: doc.data().country,
+          name: doc.data().name,
+          state: doc.data().state,
+        }
+        cities.push(city);
+      });
+      array.value = cities;
+    })
+  },
+
   data(){
     return{
       array: array
@@ -84,7 +88,26 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
+<style scoped lang="scss">
+
+#nav-router {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: right;
+}
+nav {
+  padding: 30px;
+
+  a {
+    font-weight: bold;
+    color: #2c3e50;
+
+    &.router-link-exact-active {
+       color: #42b983;
+     }
+  }
+}
+
 .search-container{
   max-width: 600px;
   padding: 20px;
