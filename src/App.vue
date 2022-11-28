@@ -1,4 +1,7 @@
+
+
 <template>
+  <Suspense>
   <v-app>
     <v-main>
       <nav>
@@ -8,6 +11,7 @@
       <router-view/>
     </v-main>
   </v-app>
+  </Suspense>
 </template>
 
 <script>

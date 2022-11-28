@@ -1,3 +1,4 @@
+
 <template>
   <nav>
     <router-link id="nav-router" to="/dashboard">Dashboard</router-link>
@@ -15,9 +16,9 @@
       </div>
     </div>
 
-    <div ref="test" v-for="city in array"
-         v-bind:key="city">
-      <TestComp class="mb-5" :city="city" ></TestComp>
+    <div  v-for="test in tests1"
+         v-bind:key="test">
+      <TestComp  class="mb-5" :test="test" ></TestComp>
     </div>
 
   </div>
@@ -26,35 +27,125 @@
 </template>
 
 <script>
-import {defineComponent, onBeforeMount, ref} from 'vue';
+import {defineComponent,  onMounted, ref} from 'vue';
 
 // Components
 import FooterComp from "@/components/FooterComp";
 import TestComp from "@/components/TestComp";
 import {db} from '@/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import {collection, getDocs, getDoc} from 'firebase/firestore';
 
-const array = ref([]);
+
 
 
 
 // const documentPath = 'cities/LA';
-// Add a new document in collection "cities"
+// // Add a new document in collection "cities"
 // setDoc(doc(db, "cities", "CZ"), {
 //   name: "Los Angeles",
 //   state: "CA",
 //   country: "USA"
 // });
-//
+
 // const docRef = doc(db, "cities", "LA");
 // //const docSnap = await getDoc(docRef);
-//
+
 // // if (docSnap.exists()) {
 //   console.log("Document data:", getDoc(docRef));
 // // } else {
 // //   // doc.data() will be undefined in this case
 // //   console.log("No such document!");
 // // }
+// function parseTest(test){
+//   const test1 = {
+//     id: test.id,
+//     testName: test.TestName,
+//     author: test.Author,
+//     questions: test.Questions,
+//   }
+//   return test1
+// }
+
+// async function queryAuthor(path) {
+//   console.log(path)
+//   return (await getDoc(path)).data();
+// }
+
+async function queryTests(){
+  let array = [];
+
+  await getDocs(collection(db, "Tests")).then(allTests => {
+    allTests.forEach( async test =>{
+      const testObj = {
+        id: test.id,
+        testName: test.data().TestName,
+        author: test.data().Author,
+        questions: test.data().Questions,
+      };
+
+     await getDoc(testObj.author).then((author) =>{
+        testObj.author = {
+          id: author.id,
+          username: author.data().Username,
+          email: author.data().Email,
+          password: author.data().Password,
+        }
+        console.log(testObj.author);
+      })
+      array.push(testObj);
+    })
+  });
+
+  return array;
+  // const queryTest = getDocs(collection(db, "Tests"));
+  // let array = [];
+
+  // array = queryTest.docs.map(doc => parseTest(doc.data()))
+  // console.log(array)
+
+
+  // queryTest.forEach(  (doc) => {
+  //   const test = {
+  //     id: doc.id,
+  //     testName: doc.data().TestName,
+  //     author: doc.data().Author,
+  //     questions: doc.data().Questions,
+  //   }
+  //
+  //   queryAuthor(test.author).then(author => {
+  //     test.author = {
+  //       id: author.id,
+  //       username: author.Username,
+  //     }
+  //   })
+
+    // const authorObject =  queryAuthor(test.author);
+    // console.log(authorObject);
+    // authorObject.then(doc => {
+    //   test.author = {
+    //     username: doc.Username,
+    //     email: doc.Email,
+    //     password: doc.Password,
+    //   }
+    // })
+
+
+  //   array.push(test);
+  //   console.log(test);
+  // });
+  // const queryA = queryAuthor(test.author);
+  // queryA.then((doc) =>{
+  //   test.author = {
+  //     username: doc.Username,
+  //     email: doc.Email,
+  //     password: doc.Password,
+  //   }
+  //})
+
+
+}
+
+
 
 // Exports
 export default defineComponent({
@@ -64,28 +155,21 @@ export default defineComponent({
     FooterComp,
     TestComp,
   },
-  setup(){
-    onBeforeMount(async ()=>{
-      const querySnapshot = await getDocs(collection(db, "cities"));
-      let cities = [];
-      querySnapshot.forEach((doc) => {
-        const city = {
-          id: doc.id,
-          country: doc.data().country,
-          name: doc.data().name,
-          state: doc.data().state,
-        }
-        cities.push(city);
-      });
-      array.value = cities;
+  async setup(){
+    const tests1 = ref([])
+    onMounted( async ()=>{
+      tests1.value = await queryTests().then();
+      console.log("DONE")
+      console.log(tests1.value);
     })
+    return {tests1};
   },
-
-  data(){
-    return{
-      array: array
-    }
-  },
+  //
+  // data(){
+  //   return{
+  //     tests: this.tests1
+  //   }
+  // },
 });
 </script>
 <style scoped lang="scss">
