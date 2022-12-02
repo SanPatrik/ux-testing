@@ -16,9 +16,10 @@
       </div>
     </div>
 
-    <div  v-for="test in tests1"
+    <div>here:  {{tests[0]}}</div>
+    <div  v-for="test in tests"
          v-bind:key="test">
-      <TestComp  class="mb-5" :test="test" ></TestComp>
+      <TestComp  class="mb-5" v-if="test" :test="test" ></TestComp>
     </div>
 
   </div>
@@ -27,17 +28,12 @@
 </template>
 
 <script>
-import {defineComponent,  onMounted, ref} from 'vue';
-
+import {defineComponent, onMounted} from 'vue';
+import {db} from '@/firebase';
+import {collection, getDocs} from 'firebase/firestore';
 // Components
 import FooterComp from "@/components/FooterComp";
 import TestComp from "@/components/TestComp";
-import {db} from '@/firebase';
-import {collection, getDocs, getDoc} from 'firebase/firestore';
-
-
-
-
 
 // const documentPath = 'cities/LA';
 // // Add a new document in collection "cities"
@@ -71,81 +67,92 @@ import {collection, getDocs, getDoc} from 'firebase/firestore';
 //   return (await getDoc(path)).data();
 // }
 
-async function queryTests(){
-  let array = [];
-
-  await getDocs(collection(db, "Tests")).then(allTests => {
-    allTests.forEach( async test =>{
-      const testObj = {
-        id: test.id,
-        testName: test.data().TestName,
-        author: test.data().Author,
-        questions: test.data().Questions,
-      };
-
-     await getDoc(testObj.author).then((author) =>{
-        testObj.author = {
-          id: author.id,
-          username: author.data().Username,
-          email: author.data().Email,
-          password: author.data().Password,
-        }
-        console.log(testObj.author);
-      })
-      array.push(testObj);
-    })
-  });
-
-  return array;
-  // const queryTest = getDocs(collection(db, "Tests"));
-  // let array = [];
-
-  // array = queryTest.docs.map(doc => parseTest(doc.data()))
-  // console.log(array)
 
 
-  // queryTest.forEach(  (doc) => {
-  //   const test = {
-  //     id: doc.id,
-  //     testName: doc.data().TestName,
-  //     author: doc.data().Author,
-  //     questions: doc.data().Questions,
-  //   }
-  //
-  //   queryAuthor(test.author).then(author => {
-  //     test.author = {
-  //       id: author.id,
-  //       username: author.Username,
-  //     }
-  //   })
-
-    // const authorObject =  queryAuthor(test.author);
-    // console.log(authorObject);
-    // authorObject.then(doc => {
-    //   test.author = {
-    //     username: doc.Username,
-    //     email: doc.Email,
-    //     password: doc.Password,
-    //   }
-    // })
-
-
-  //   array.push(test);
-  //   console.log(test);
-  // });
-  // const queryA = queryAuthor(test.author);
-  // queryA.then((doc) =>{
-  //   test.author = {
-  //     username: doc.Username,
-  //     email: doc.Email,
-  //     password: doc.Password,
-  //   }
-  //})
-
-
-}
-
-
+// function queryTests(){
+//   let array = [];
+//   // var clovek = {
+//   //   iq: 150,
+//   //   vyska: 175
+//   // }
+//   // array.push(clovek);
+//   //
+//   // clovek = {
+//   //   iq: 100,
+//   //   vyska: 190
+//   // }
+//   // array.push(clovek);
+//
+//   getDocs(collection(db, "Tests")).then(allTests => {
+//     allTests.forEach( test =>{
+//       const testObj = {
+//         id: test.id,
+//         testName: test.data().TestName,
+//         author: test.data().Author,
+//         questions: test.data().Questions,
+//       };
+//
+//       // getDoc(testObj.author).then((author) =>{
+//       //   testObj.author = {
+//       //     id: author.id,
+//       //     username: author.data().Username,
+//       //     email: author.data().Email,
+//       //     password: author.data().Password,
+//       //   }
+//       //   console.log(testObj.author);
+//       // })
+//       array.push(testObj);
+//     })
+//   });
+//
+//   // const queryTest = await getDocs(collection(db, "Tests"));
+//   // // let array = [];
+//   //
+//   // // array = queryTest.docs.map(doc => parseTest(doc.data()))
+//   // // console.log(array)
+//   //
+//   //
+//   // queryTest.forEach((doc) => {
+//   //   const test = {
+//   //     id: doc.id,
+//   //     testName: doc.data().TestName,
+//   //     author: doc.data().Author,
+//   //     questions: doc.data().Questions,
+//   //   }
+//   //
+//   //   getDoc(test.author).then((author) =>{
+//   //     test.author = {
+//   //       id: author.id,
+//   //       username: author.data().Username,
+//   //     }
+//   //     console.log(test.author)
+//   //   })
+//
+//   // const authorObject =  queryAuthor(test.author);
+//     // console.log(authorObject);
+//     // authorObject.then(doc => {
+//     //   test.author = {
+//     //     username: doc.Username,
+//     //     email: doc.Email,
+//     //     password: doc.Password,
+//     //   }
+//     // })
+//
+//   //   array.push(test);
+//   //   console.log(test);
+//   // });
+//   // const queryA = queryAuthor(test.author);
+//   // queryA.then((doc) =>{
+//   //   test.author = {
+//   //     username: doc.Username,
+//   //     email: doc.Email,
+//   //     password: doc.Password,
+//   //   }
+//   //})
+//
+//   return array;
+//
+// }
 
 // Exports
 export default defineComponent({
@@ -155,21 +162,41 @@ export default defineComponent({
     FooterComp,
     TestComp,
   },
-  async setup(){
-    const tests1 = ref([])
-    onMounted( async ()=>{
-      tests1.value = await queryTests().then();
-      console.log("DONE")
-      console.log(tests1.value);
+  setup(){
+    onMounted(async ()=>{
+      let array = [];
+      await getDocs(collection(db, "Tests")).then(allTests => {
+          allTests.forEach( test =>{
+            const testObj = {
+              id: test.id,
+              testName: test.data().TestName,
+              author: test.data().Author,
+              questions: test.data().Questions,
+            };
+
+            // getDoc(testObj.author).then((author) =>{
+            //   testObj.author = {
+            //     id: author.id,
+            //     username: author.data().Username,
+            //     email: author.data().Email,
+            //     password: author.data().Password,
+            //   }
+            //   console.log(testObj.author);
+            // })
+            array.push(testObj);
+          })
+        })
+      this.tests = array;
+      console.log(this.tests);
     })
-    return {tests1};
   },
-  //
-  // data(){
-  //   return{
-  //     tests: this.tests1
-  //   }
-  // },
+
+  data(){
+
+    return{
+      tests: []
+    }
+  },
 });
 </script>
 <style scoped lang="scss">
