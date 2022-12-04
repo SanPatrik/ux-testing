@@ -4,8 +4,8 @@
       <div class="content">
         <div class="columns is-mobile is-vcentered">
           <div class="column has-text-left">
-            <div><b>{{test}}</b></div>
-            <div>{{test}}</div>
+            <div :key="test"><b>{{test.testName}}</b></div>
+            <div :key="test">{{test.author.username}}</div>
           </div>
           <div class="column has-text-right is-5">
             <button class="button is-primary">Open</button>
@@ -27,7 +27,7 @@ export default {
     test: Object,
   },
   data(){
-    console.log(this.test);
+    console.log(this.test.author);
   },
   // setup(props){
   //   const test = ref();
