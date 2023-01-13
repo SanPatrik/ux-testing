@@ -15,7 +15,6 @@
         </a>
       </div>
     </div>
-<!--    <div :key="tests">{{tests.toString()}}</div>-->
     <div v-for="test in tests" v-bind:key="test">
       <TestComp  class="mb-5" :test="test" ></TestComp>
     </div>
@@ -26,7 +25,7 @@
 </template>
 
 <script>
-import {defineComponent, onMounted, ref} from 'vue';
+import {defineComponent, reactive} from 'vue';
 import {db} from '@/firebase';
 import {collection, getDocs, getDoc} from 'firebase/firestore';
 // Components
@@ -65,144 +64,198 @@ import TestComp from "@/components/TestComp";
 //   return (await getDoc(path)).data();
 // }
 
-
-
-async function queryTests(){
-  let array = [];
-
-  await getDocs(collection(db, "Tests")).then(allTests => {
-    allTests.forEach(test => {
-      const testObj = {
-        id: test.id,
-        testName: test.data().TestName,
-        // author: test.data().Author,
-        author: getDoc(test.data().Author).then((author) =>{
-          return {
-            id: author.id,
-            username: author.data().Username,
-            email: author.data().Email,
-            password: author.data().Password,
-          }
-        }),
-        questions: test.data().Questions,
-      };
-    // allTests.forEach(test => {
-    //   const testObj = {
-    //     id: test.id,
-    //     testName: test.data().TestName,
-    //     // author: test.data().Author,
-    //     author: getDoc(test.data().Author).then((author) =>{
-    //       return {
-    //         id: author.id,
-    //         username: author.data().Username,
-    //         email: author.data().Email,
-    //         password: author.data().Password,
-    //       }
-    //     }),
-    //     questions: test.data().Questions,
-    //   };
-
-      // getDoc(testObj.author).then((author) =>{
-      //   testObj.author = {
-      //     id: author.id,
-      //     username: author.data().Username,
-      //     email: author.data().Email,
-      //     password: author.data().Password,
-      //   }
-      //   console.log(testObj.author);
-      // })
-      array.push(testObj);
-
-    })
-
-    console.log(array)
-  })
-  const arrayPromises = array.map(async (test) =>{
-    return await test
-  });
-  return await Promise.all(arrayPromises);
-//   // var clovek = {
-//   //   iq: 150,
-//   //   vyska: 175
-//   // }
-//   // array.push(clovek);
-//   //
-//   // clovek = {
-//   //   iq: 100,
-//   //   vyska: 190
-//   // }
-//   // array.push(clovek);
+//
+// async function queryTests(){
+//   let array = [];
+//   // let getTests = await getDocs(collection(db, "Tests"));
 //
 //   getDocs(collection(db, "Tests")).then(allTests => {
-//     allTests.forEach( test =>{
+//     allTests.forEach(async test => {
+//       // let tempAuthor = await getDoc(test.data().Author);
 //       const testObj = {
 //         id: test.id,
 //         testName: test.data().TestName,
-//         author: test.data().Author,
-//         questions: test.data().Questions,
+//         // author: test.data().Author,
+//         author: await getDoc(test.data().Author).then((author) =>{
+//           return {
+//             id: author.id,
+//             username: author.data().Username,
+//             email: author.data().Email,
+//             password: author.data().Password,
+//           }
+//         }),
+//         questions: test.Questions,
 //       };
-//
-//       // getDoc(testObj.author).then((author) =>{
-//       //   testObj.author = {
-//       //     id: author.id,
-//       //     username: author.data().Username,
-//       //     email: author.data().Email,
-//       //     password: author.data().Password,
-//       //   }
-//       //   console.log(testObj.author);
-//       // })
-//       array.push(testObj);
-//     })
-//   });
-//
-//   // const queryTest = await getDocs(collection(db, "Tests"));
-//   // // let array = [];
-//   //
-//   // // array = queryTest.docs.map(doc => parseTest(doc.data()))
-//   // // console.log(array)
-//   //
-//   //
-//   // queryTest.forEach((doc) => {
-//   //   const test = {
-//   //     id: doc.id,
-//   //     testName: doc.data().TestName,
-//   //     author: doc.data().Author,
-//   //     questions: doc.data().Questions,
-//   //   }
-//   //
-//   //   getDoc(test.author).then((author) =>{
-//   //     test.author = {
-//   //       id: author.id,
-//   //       username: author.data().Username,
-//   //     }
-//   //     console.log(test.author)
-//   //   })
-//
-//   // const authorObject =  queryAuthor(test.author);
-//     // console.log(authorObject);
-//     // authorObject.then(doc => {
-//     //   test.author = {
-//     //     username: doc.Username,
-//     //     email: doc.Email,
-//     //     password: doc.Password,
+//     // allTests.forEach(test => {
+//     //   const testObj = {
+//     //     id: test.id,
+//     //     testName: test.data().TestName,
+//     //     // author: test.data().Author,
+//     //     author: getDoc(test.data().Author).then((author) =>{
+//     //       return {
+//     //         id: author.id,
+//     //         username: author.data().Username,
+//     //         email: author.data().Email,
+//     //         password: author.data().Password,
+//     //       }
+//     //     }),
+//     //     questions: test.data().Questions,
+//     //   };
+//     // getDoc(testObj.author).then((author) =>{
+//     //   testObj.author = {
+//     //     id: author.id,
+//     //     username: author.data().Username,
+//     //     email: author.data().Email,
+//     //     password: author.data().Password,
 //     //   }
+//     //   console.log(testObj.author);
 //     // })
+//       array.push(testObj);
 //
-//   //   array.push(test);
-//   //   console.log(test);
+//     })
+//
+//     console.log(array)
+//     return array
+//   })
+//   // const arrayPromises = array.map(async (test) =>{
+//   //   return await test
 //   // });
-//   // const queryA = queryAuthor(test.author);
-//   // queryA.then((doc) =>{
-//   //   test.author = {
-//   //     username: doc.Username,
-//   //     email: doc.Email,
-//   //     password: doc.Password,
-//   //   }
-//   //})
+//   // return await Promise.all(arrayPromises);
 //
-//   return array;
+//   // return new Promise((getTests) => {
+//   //   getTests.then(allTests => {
+//   //     allTests.forEach(test => {
+//   //       const testObj = {
+//   //         id: test.id,
+//   //         testName: test.data().TestName,
+//   //         // author: test.data().Author,
+//   //         author: getDoc(test.data().Author).then((author) =>{
+//   //           return {
+//   //             id: author.id,
+//   //             username: author.data().Username,
+//   //             email: author.data().Email,
+//   //             password: author.data().Password,
+//   //           }
+//   //         }),
+//   //         questions: test.data().Questions,
+//   //       };
+//   //       // allTests.forEach(test => {
+//   //       //   const testObj = {
+//   //       //     id: test.id,
+//   //       //     testName: test.data().TestName,
+//   //       //     // author: test.data().Author,
+//   //       //     author: getDoc(test.data().Author).then((author) =>{
+//   //       //       return {
+//   //       //         id: author.id,
+//   //       //         username: author.data().Username,
+//   //       //         email: author.data().Email,
+//   //       //         password: author.data().Password,
+//   //       //       }
+//   //       //     }),
+//   //       //     questions: test.data().Questions,
+//   //       //   };
+//   //
+//   //       // getDoc(testObj.author).then((author) =>{
+//   //       //   testObj.author = {
+//   //       //     id: author.id,
+//   //       //     username: author.data().Username,
+//   //       //     email: author.data().Email,
+//   //       //     password: author.data().Password,
+//   //       //   }
+//   //       //   console.log(testObj.author);
+//   //       // })
+//   //       array.push(testObj);
+//   //
+//   //     })
+//   //
+//   //     console.log(array)
+//   //   });
+//   // }).then((array) => {
+//   //   this.foo = array;
+//   // })
 //
-}
+// //   // var clovek = {
+// //   //   iq: 150,
+// //   //   vyska: 175
+// //   // }
+// //   // array.push(clovek);
+// //   //
+// //   // clovek = {
+// //   //   iq: 100,
+// //   //   vyska: 190
+// //   // }
+// //   // array.push(clovek);
+// //
+// //   getDocs(collection(db, "Tests")).then(allTests => {
+// //     allTests.forEach( test =>{
+// //       const testObj = {
+// //         id: test.id,
+// //         testName: test.data().TestName,
+// //         author: test.data().Author,
+// //         questions: test.data().Questions,
+// //       };
+// //
+// //       // getDoc(testObj.author).then((author) =>{
+// //       //   testObj.author = {
+// //       //     id: author.id,
+// //       //     username: author.data().Username,
+// //       //     email: author.data().Email,
+// //       //     password: author.data().Password,
+// //       //   }
+// //       //   console.log(testObj.author);
+// //       // })
+// //       array.push(testObj);
+// //     })
+// //   });
+// //
+// //   // const queryTest = await getDocs(collection(db, "Tests"));
+// //   // // let array = [];
+// //   //
+// //   // // array = queryTest.docs.map(doc => parseTest(doc.data()))
+// //   // // console.log(array)
+// //   //
+// //   //
+// //   // queryTest.forEach((doc) => {
+// //   //   const test = {
+// //   //     id: doc.id,
+// //   //     testName: doc.data().TestName,
+// //   //     author: doc.data().Author,
+// //   //     questions: doc.data().Questions,
+// //   //   }
+// //   //
+// //   //   getDoc(test.author).then((author) =>{
+// //   //     test.author = {
+// //   //       id: author.id,
+// //   //       username: author.data().Username,
+// //   //     }
+// //   //     console.log(test.author)
+// //   //   })
+// //
+// //   // const authorObject =  queryAuthor(test.author);
+// //     // console.log(authorObject);
+// //     // authorObject.then(doc => {
+// //     //   test.author = {
+// //     //     username: doc.Username,
+// //     //     email: doc.Email,
+// //     //     password: doc.Password,
+// //     //   }
+// //     // })
+// //
+// //   //   array.push(test);
+// //   //   console.log(test);
+// //   // });
+// //   // const queryA = queryAuthor(test.author);
+// //   // queryA.then((doc) =>{
+// //   //   test.author = {
+// //   //     username: doc.Username,
+// //   //     email: doc.Email,
+// //   //     password: doc.Password,
+// //   //   }
+// //   //})
+// //
+// //   return array;
+// //
+// }
 
 // Exports
 export default defineComponent({
@@ -212,12 +265,14 @@ export default defineComponent({
     FooterComp,
     TestComp,
   },
-  setup(){
-    const tests = ref([]);
-    let array;
-    onMounted(async ()=>{
-      array = queryTests();
-      tests.value = await array;
+  async setup(){
+    // let tests = ref(queryTests());
+    // queryTests()
+    //console.log(tests)
+    // let array;
+    // onMounted(async ()=>{
+    //   array = queryTests();
+    //   tests.value = await array;
       // onMounted(async ()=>{
       //   let array = ref([]);
       //   await getDocs(collection(db, "Tests")).then(allTests => {
@@ -244,12 +299,91 @@ export default defineComponent({
       //   this.tests = array;
       //   console.log(this.tests);
       // })
-      console.log(tests.value);
+      // console.log(tests.value);
       // return tests.value
-    })
-    return {tests}
-  },
+    // })
+    // let getTests = await getDocs(collection(db, "Tests"));
+    // allTests.forEach(test => {
+    //   const testObj = {
+    //     id: test.id,
+    //     testName: test.data().TestName,
+    //     // author: test.data().Author,
+    //     author: getDoc(test.data().Author).then((author) =>{
+    //       return {
+    //         id: author.id,
+    //         username: author.data().Username,
+    //         email: author.data().Email,
+    //         password: author.data().Password,
+    //       }
+    //     }),
+    //     questions: test.data().Questions,
+    //   };
+    // getDoc(testObj.author).then((author) =>{
+    //   testObj.author = {
+    //     id: author.id,
+    //     username: author.data().Username,
+    //     email: author.data().Email,
+    //     password: author.data().Password,
+    //   }
+    //   console.log(testObj.author);
+    // })
+    // let tempAuthor = await getDoc(test.data().Author);
+    // author: test.data().Author,
 
+    let tests = reactive([]);
+
+    return await getDocs(collection(db, "Tests")).then(allTests => {
+      allTests.forEach( async test => {
+        const testObj = {
+          id: test.id,
+          testName: test.data().TestName,
+          author: await getDoc(test.data().Author).then((author) =>{
+            return {
+              id: author.id,
+              username: author.data().Username,
+              email: author.data().Email,
+              password: author.data().Password,
+            }
+          }),
+          questions: await getDocs(collection(db,test.ref.path+"/Questions")).then((questions)=> {
+            let questionsArray = [];
+            questions.forEach( async question =>{
+              const questionObj = {
+                answers: await getDocs(collection(db,question.ref.path+"/Answers")).then((answers)=>{
+                  let answersArray = [];
+                  answers.forEach( answer =>{
+                    const answerObj = {
+                      choice: answer.data().Choice,
+                      clicks: answer.data().Clicks
+                    }
+                    answersArray.push(answerObj);
+                  })
+                  return answersArray;
+                }),
+                question: question.data().Question,
+                questionType: question.data().QuestionType
+              }
+              questionsArray.push(questionObj)
+            })
+            return questionsArray;
+          })
+        };
+        tests.push(testObj);
+      })
+      console.log(tests)
+      console.log("1")
+      return tests
+    }).finally(()=>{
+      console.log(tests)
+      console.log("2")
+      return {tests}
+    })
+
+    // const data = getData;
+    // console.log(data);
+    // console.log("3")
+    // return {data}
+  },
   // data(){
   //
   //   return{
