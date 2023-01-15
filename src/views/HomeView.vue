@@ -15,6 +15,7 @@
         </a>
       </div>
     </div>
+<!--    <div>{{tests[0].questions[0].question}}</div>-->
     <div v-for="test in tests" v-bind:key="test">
       <TestComp  class="mb-5" :test="test" ></TestComp>
     </div>
@@ -25,7 +26,7 @@
 </template>
 
 <script>
-import {defineComponent, reactive} from 'vue';
+import {defineComponent, reactive, ref} from 'vue';
 import {db} from '@/firebase';
 import {collection, getDocs, getDoc} from 'firebase/firestore';
 // Components
@@ -257,6 +258,54 @@ import TestComp from "@/components/TestComp";
 // //
 // }
 
+function getTests() {
+  const tests = ref([]);
+  getDocs(collection(db, "Tests")).then(allTests => {
+    allTests.forEach( async test => {
+      const testObj = reactive({
+        id: test.id,
+        testName: test.data().TestName,
+        author: await getDoc(test.data().Author).then((author) =>{
+          return  reactive({
+            id: author.id,
+            username: author.data().Username,
+            email: author.data().Email,
+            password: author.data().Password,
+          })
+        }),
+        // questions: await getDocs(collection(db,test.ref.path+"/Questions")).then((questions)=> {
+        //   const questionsArray = ref([]);
+        //   questions.forEach( async question =>{
+        //     const questionObj = reactive({
+        //       answers: await getDocs(collection(db,question.ref.path+"/Answers")).then((answers)=>{
+        //         const answersArray = ref([]);
+        //         answers.forEach( answer =>{
+        //           const answerObj = reactive({
+        //             choice: answer.data().Choice,
+        //             clicks: answer.data().Clicks
+        //           })
+        //           answersArray.value.push(answerObj);
+        //         })
+        //         return answersArray;
+        //       }),
+        //       question: question.data().Question,
+        //       questionType: question.data().QuestionType
+        //     })
+        //     questionsArray.value.push(questionObj)
+        //   })
+        //   return questionsArray;
+        // })
+      });
+      tests.value.push(testObj);
+    })
+    console.log(tests)
+    console.log("1")
+  })
+  console.log(tests)
+  console.log("3")
+  return tests
+}
+
 // Exports
 export default defineComponent({
   name: 'HomeView',
@@ -265,7 +314,7 @@ export default defineComponent({
     FooterComp,
     TestComp,
   },
-  async setup(){
+  setup(){
     // let tests = ref(queryTests());
     // queryTests()
     //console.log(tests)
@@ -329,55 +378,13 @@ export default defineComponent({
     // })
     // let tempAuthor = await getDoc(test.data().Author);
     // author: test.data().Author,
+    let tests = getTests();
+    // tests.push();
+    console.log(tests);
+    console.log("4");
 
-    let tests = reactive([]);
+    return {tests}
 
-    return await getDocs(collection(db, "Tests")).then(allTests => {
-      allTests.forEach( async test => {
-        const testObj = {
-          id: test.id,
-          testName: test.data().TestName,
-          author: await getDoc(test.data().Author).then((author) =>{
-            return {
-              id: author.id,
-              username: author.data().Username,
-              email: author.data().Email,
-              password: author.data().Password,
-            }
-          }),
-          questions: await getDocs(collection(db,test.ref.path+"/Questions")).then((questions)=> {
-            let questionsArray = [];
-            questions.forEach( async question =>{
-              const questionObj = {
-                answers: await getDocs(collection(db,question.ref.path+"/Answers")).then((answers)=>{
-                  let answersArray = [];
-                  answers.forEach( answer =>{
-                    const answerObj = {
-                      choice: answer.data().Choice,
-                      clicks: answer.data().Clicks
-                    }
-                    answersArray.push(answerObj);
-                  })
-                  return answersArray;
-                }),
-                question: question.data().Question,
-                questionType: question.data().QuestionType
-              }
-              questionsArray.push(questionObj)
-            })
-            return questionsArray;
-          })
-        };
-        tests.push(testObj);
-      })
-      console.log(tests)
-      console.log("1")
-      return tests
-    }).finally(()=>{
-      console.log(tests)
-      console.log("2")
-      return {tests}
-    })
 
     // const data = getData;
     // console.log(data);

@@ -3,17 +3,27 @@
     <div class="card-content">
       <div class="content">
         <div class="columns is-mobile is-vcentered">
+
+
           <div class="column has-text-left">
-            <div :key="test"><b>{{test.testName}}</b></div>
-<!--            <div :key="test">{{test.author.username}}</div>-->
-<!--            <div :key="test">{{test.questions[0].question}}</div>-->
-<!--            <div v-for="answer in test.questions[0].answers" v-bind:key="answer">-->
-<!--                <p>{{answer.choice}}</p>-->
+            <div><b>{{test.testName}}</b></div>
+            <div>{{test.author.username}}</div>
+<!--            <div v-for="question in test.questions" v-bind:key="question">-->
+<!--              <div>{{question.question}} Type: {{question.questionType}}</div>-->
+<!--              <ul v-for="answer in question.answers" v-bind:key="answer">-->
+<!--                  <li>{{answer.choice}} NO clicks: {{answer.clicks}}</li>-->
+<!--              </ul>-->
 <!--            </div>-->
           </div>
+
           <div class="column has-text-right is-5">
-            <button class="button is-primary">Open</button>
+            <router-link :to="{params: {postId: test.id}, name: 'TestView',
+             query:{author: test.author.username, testName: test.testName}}">
+              <button class="button is-primary">Open</button>
+            </router-link>
           </div>
+
+
         </div>
       </div>
     </div>
@@ -25,15 +35,15 @@
 
 // import {onMounted, ref} from "vue";
 
-import {toRefs} from "vue";
+import {} from "vue";
 
 export default {
   name: "TestComp",
   props:{
-    test: toRefs(Object),
+    test: Object,
   },
   data(){
-    // console.log(this.test.author);
+    console.log(this.test);
   },
   // setup(props){
   //   const test = ref();
