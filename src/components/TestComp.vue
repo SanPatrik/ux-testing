@@ -1,4 +1,4 @@
-<template>
+<template class="v-card">
   <div class="card">
     <div class="card-content">
       <div class="content">
@@ -15,7 +15,6 @@
 <!--              </ul>-->
 <!--            </div>-->
           </div>
-
           <div class="column has-text-right is-5">
             <router-link :to="{params: {postId: test.id}, name: 'TestView',
              query:{author: test.author.username, testName: test.testName}}">

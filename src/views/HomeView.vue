@@ -1,6 +1,6 @@
 
-<template>
-  <nav>
+<template class="v-card">
+  <nav class="pb-16">
     <router-link id="nav-router" to="/dashboard">Dashboard</router-link>
   </nav>
 
@@ -22,7 +22,8 @@
 
   </div>
 
-  <FooterComp class="is-flex-align-items-flex-end mt-auto"></FooterComp>
+
+  <FooterComp/>
 </template>
 
 <script>

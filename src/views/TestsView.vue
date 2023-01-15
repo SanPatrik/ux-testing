@@ -1,4 +1,4 @@
-<template>
+<template >
   <header>
     <h1 class="text-h4"><b>{{$route.query.testName}}</b></h1>
     <h2 class="text-h5">Made by <b>{{$route.query.author}}</b></h2>

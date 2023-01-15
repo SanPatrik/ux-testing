@@ -1,12 +1,31 @@
-<template>
-  <div class="dashboard">
+<template class="v-card">
+  <div class="search-container">
 
-    <h1>dashboard todo</h1>
-    # all created tests
-    # allow to view statistics
+    <header>
+      <h1 class="text-h4"><b>Dashboard</b></h1>
+      <h2 class="text-h5">Welcome <b>$loggedUser</b></h2>
+    </header>
+
+    <div class="field is-grouped">
+      <div class="control is-expanded">
+        <input class="input" type="text" placeholder="Find a test">
+      </div>
+      <div class="control">
+        <a class="button is-info">
+          Search
+        </a>
+      </div>
+    </div>
+
+    <div>
+      $browse tests for statistics
+    </div>
+
   </div>
-  <router-link id="nav-router" to="/create">+</router-link>
-  <footer-comp/>
+  <router-link to="/create">
+    <button class="button is-primary rounded-pill" >Create new Test</button>
+  </router-link>
+  <FooterComp/>
 </template>
 
 <script>
@@ -58,21 +77,10 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-#nav-router {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: right;
-}
-nav {
-  padding: 30px;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+.search-container{
+  max-width: 600px;
+  padding: 20px;
+  margin: 0 auto;
 }
 </style>
