@@ -15,7 +15,7 @@
         </a>
       </div>
     </div>
-<!--    <div>{{tests[0].questions[0].question}}</div>-->
+<!--    <div>{{tests[0]}}</div>-->
     <div v-for="test in tests" v-bind:key="test">
       <TestComp  class="mb-5" :test="test" ></TestComp>
     </div>
@@ -266,14 +266,14 @@ function getTests() {
       const testObj = reactive({
         id: test.id,
         testName: test.data().TestName,
-        author: await getDoc(test.data().Author).then((author) =>{
+        author: test.data().Author ? (await getDoc(test.data().Author).then((author) =>{
           return  reactive({
             id: author.id,
             username: author.data().Username,
             email: author.data().Email,
             password: author.data().Password,
           })
-        }),
+        })) : ({username: "Unknown"}),
         // questions: await getDocs(collection(db,test.ref.path+"/Questions")).then((questions)=> {
         //   const questionsArray = ref([]);
         //   questions.forEach( async question =>{

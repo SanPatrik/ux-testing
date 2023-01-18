@@ -5,7 +5,7 @@
   </header>
   <section class="search-container">
     <form>
-      <div class="card" v-for="question in questions" v-bind:key="question">
+      <div class="card mb-5" v-for="question in questions" v-bind:key="question">
         <div class="card-content">
           <p><b>{{question.question}}</b></p>
           <div class="content">

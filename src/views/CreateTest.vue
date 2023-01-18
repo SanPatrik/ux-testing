@@ -14,114 +14,72 @@
             </header>
           </div>
         </div>
-
-
-
-        <div class="card">
-          <div class="card-content">
-            <b>
-              <v-text-field
-                            v-model="test.questions[0].question"
-                            label="Insert question"
-                            placeholder="Question"
-                            @change="getQuestion(0)"
-              ></v-text-field>
-            </b>
-            <div class="content">
-              <div class="columns is-mobile is-vcentered">
-
-                <div class="column has-text-left">
-                  <div v-if="selectedType === 'Radio'">
-                    <v-text-field
-                        v-model="test.questions[0].answers[0].choice"
-                        label="Insert choice"
-                        placeholder="Choice"
-                        filled
-                        rounded
-                        dense
-                        @change="getQuestionChoice()"
-                    ></v-text-field>
-                  </div>
-                </div>
-
-                <div class="column has-text-right is-5">
-                  <v-select
-                      v-model="selectedType"
-                      :items="questionType"
-                      item-text="type"
-                      label="Type of question"
-                      return-object
-                      solo
-                      @change="getQuestionType(0)"
-                  ></v-select>
-                </div>
-
-
-              </div>
-            </div>
-            <button class="button is-primary rounded-circle" @click="addQuestion()">+</button>
-          </div>
+<!--        <TestingComp :question="test.questions[0].questionName" :index="0" @my-event="myEvent"></TestingComp>-->
+        <div class="pb-5" v-for="(question, index) in test.questions" v-bind:key="question">
+          <QuestionCard :index="index" @update-question="updateQuestion"></QuestionCard>
         </div>
+        <button class="button is-primary rounded-circle is-mobile is-vcentered" @click="addQuestion()">+</button>
       </div>
     </form>
 
-  <button class="button is-primary rounded-pill" >Create</button>
+  <button class="button is-primary rounded-pill" @click="submitTest()">Create</button>
   <FooterComp/>
 </template>
 
 <script>
-import {defineComponent, reactive, ref} from 'vue';
+import {defineComponent, reactive, ref, toRaw,} from 'vue';
+import {db} from '@/firebase';
+import {collection, setDoc, doc} from 'firebase/firestore';
 
 // Components
 import FooterComp from "@/components/FooterComp";
+import QuestionCard from "@/components/QuestionCard.vue";
+// import TestingComp from "@/components/TestingComp.vue";
 export default defineComponent({
   name: 'CreateTest',
-
   components: {
     FooterComp,
-  },
-  props:{
-
+    QuestionCard
   },
   setup(){
-    const questionType = ["Radio", "Multi", "Input", "File", "Heatmap", "Cardsort"];
-    return {questionType}
-  },
-  data(){
-    const answer = reactive({
-      choice: "",
-      clicks: 0
-    })
-    const question = reactive({
-      question: "",
-      questionType: "",
-      answers: ref([])
-    })
     const test = reactive({
       testName: "",
       questions: ref([])
     })
-    question.answers.push(answer);
-    test.questions.push(question);
-    return { selectedType: "Radio", test}
+    test.questions.push({});
+    return {test}
   },
   methods:{
-    addQuestion(){
-
+    updateQuestion(emit){
+      this.test.questions[emit.index].value = emit.question;
+      console.log(this.test)
     },
-
+    addQuestion(){
+      this.test.questions.push({})
+    },
+    async submitTest(){
+      const testRef = await doc(collection(db, "Tests"))
+      await setDoc(doc(db,testRef.path),{
+        TestName: this.test.testName
+      })
+      for (const question of toRaw(this.test.questions)) {
+        const questionRef = await doc(collection(db, testRef.path+"/Questions"))
+        await setDoc(doc(db, questionRef.path),{
+          Question: question.value.questionName,
+          QuestionType: question.value.questionType
+        })
+        for (const answer of toRaw(question.value.answers.value)){
+          const answerRef = await doc(collection(db, questionRef.path+"/Answers"))
+          await setDoc(doc(db, answerRef.path),{
+            Choice: answer.value.choice,
+            Clicks: answer.value.clicks,
+          })
+        }
+      }
+    },
     getTestName(){
       console.log(this.test.testName);
     },
-    getQuestion(index){
-      console.log(this.test.questions[index].question)
-    },
-    getQuestionType(index){
-      console.log(this.test.questions[index].questionType)
-    },
-    getQuestionChoice(){
-      console.log(this.test.questions[0].answers[0].choice)
-    }
   }
 });
 </script>
