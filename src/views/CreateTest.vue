@@ -22,18 +22,20 @@
       </div>
     </form>
 
-  <button class="button is-primary rounded-pill" @click="submitTest()">Create</button>
+  <button class="button is-primary rounded-pill" @click="createTest()">Create</button>
   <FooterComp/>
 </template>
 
 <script>
 import {defineComponent, reactive, ref, toRaw,} from 'vue';
+import router from "@/router";
 import {db} from '@/firebase';
 import {collection, setDoc, doc} from 'firebase/firestore';
 
 // Components
 import FooterComp from "@/components/FooterComp";
 import QuestionCard from "@/components/QuestionCard.vue";
+
 // import TestingComp from "@/components/TestingComp.vue";
 export default defineComponent({
   name: 'CreateTest',
@@ -57,7 +59,7 @@ export default defineComponent({
     addQuestion(){
       this.test.questions.push({})
     },
-    async submitTest(){
+    async createTest(){
       const testRef = await doc(collection(db, "Tests"))
       await setDoc(doc(db,testRef.path),{
         TestName: this.test.testName
@@ -76,6 +78,7 @@ export default defineComponent({
           })
         }
       }
+      await router.push('/')
     },
     getTestName(){
       console.log(this.test.testName);

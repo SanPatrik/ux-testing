@@ -9,12 +9,13 @@
         <div class="card-content">
           <p><b>{{question.question}}</b></p>
           <div class="content">
-            <RadioQuestion v-if="question.questionType === 'Radio'" :question="question"></RadioQuestion>
-            <MultiQuestion v-if="question.questionType === 'Multi'" :question="question"></MultiQuestion>
+            <RadioQuestion v-if="question.questionType === 'Radio'" :question="question" :isSubmitted="isSubmitted"></RadioQuestion>
+            <MultiQuestion v-if="question.questionType === 'Multi'" :question="question" :isSubmitted="isSubmitted"></MultiQuestion>
           </div>
         </div>
       </div>
     </form>
+    <button :disabled="isSubmitted" class="button is-primary rounded-pill" @click="submitTest()">Submit</button>
   </section>
 </template>
 
@@ -25,7 +26,6 @@ import {db} from "@/firebase";
 import MultiQuestion from "@/components/MultiQuestion.vue";
 import RadioQuestion from "@/components/RadioQuestion.vue";
 
-
 function getQuestions(testId){
   const questionsArray = ref([]);
   getDocs(collection(db,"Tests/"+testId+"/Questions")).then((questions)=> {
@@ -35,6 +35,7 @@ function getQuestions(testId){
           const answersArray = ref([]);
           answers.forEach( answer =>{
             const answerObj = reactive({
+              ref: answer.ref,
               choice: answer.data().Choice,
               clicks: answer.data().Clicks
             })
@@ -67,8 +68,13 @@ export default {
     return {questions}
   },
   data(){
-    console.log();
+    return {isSubmitted: false}
   },
+  methods:{
+    submitTest(){
+      this.isSubmitted = true;
+    },
+  }
 }
 </script>
 

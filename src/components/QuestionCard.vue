@@ -63,7 +63,7 @@ export default {
       answers: ref([])
     })
     question.answers.push({});
-    const questionTypes = ["Radio", "Multi", "Input", "File", "Heatmap", "Cardsort"];
+    const questionTypes = ["Radio", "Multi", "Input NON FUNCTIONAL", "File NON FUNCTIONAL", "Heatmap NON FUNCTIONAL", "Cardsort NON FUNCTIONAL"];
     return {question, questionTypes}
   },
   methods:{
