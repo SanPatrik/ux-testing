@@ -18,7 +18,7 @@
         <div class="pb-5" v-for="(question, index) in test.questions" v-bind:key="question">
           <QuestionCard :index="index" @update-question="updateQuestion"></QuestionCard>
         </div>
-        <button class="button is-primary rounded-circle is-mobile is-vcentered" @click="addQuestion()">+</button>
+        <button class="button is-primary rounded-pill is-mobile is-vcentered" @click="addQuestion()">Add question</button>
       </div>
     </form>
 
@@ -29,7 +29,7 @@
 <script>
 import {defineComponent, reactive, ref, toRaw,} from 'vue';
 import router from "@/router";
-import {db} from '@/firebase';
+import {db, auth} from '@/firebase';
 import {collection, setDoc, doc} from 'firebase/firestore';
 
 // Components
@@ -62,7 +62,8 @@ export default defineComponent({
     async createTest(){
       const testRef = await doc(collection(db, "Tests"))
       await setDoc(doc(db,testRef.path),{
-        TestName: this.test.testName
+        TestName: this.test.testName,
+        Author: doc(db, 'Authors', auth.currentUser.uid)
       })
       for (const question of toRaw(this.test.questions)) {
         const questionRef = await doc(collection(db, testRef.path+"/Questions"))

@@ -3,7 +3,7 @@
 
     <header>
       <h1 class="text-h4"><b>Dashboard</b></h1>
-      <h2 class="text-h5">Welcome <b>$loggedUser</b></h2>
+      <h2 class="text-h5">Welcome <b>{{user.displayName}}</b></h2>
     </header>
 
     <div class="field is-grouped">
@@ -30,17 +30,13 @@
 
 <script>
 import {defineComponent} from 'vue';
-
-// Components
+import {auth} from "@/firebase";
 import FooterComp from "@/components/FooterComp";
+
 //import TestComp from "@/components/TestComp";
 //import {db} from '@/firebase';
 //import { collection, getDocs } from 'firebase/firestore';
-
 //const array = ref([]);
-
-
-
 // const documentPath = 'cities/LA';
 // Add a new document in collection "cities"
 // setDoc(doc(db, "cities", "CZ"), {
@@ -59,7 +55,8 @@ import FooterComp from "@/components/FooterComp";
 // //   console.log("No such document!");
 // // }
 
-// Exports
+
+
 export default defineComponent({
   name: 'DashBoard',
 
@@ -67,10 +64,13 @@ export default defineComponent({
     FooterComp,
 
   },
+  setup(){
+  },
 
 
   data(){
     return{
+        user: auth.currentUser
     }
   },
 });

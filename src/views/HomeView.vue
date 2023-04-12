@@ -1,8 +1,8 @@
 
 <template class="v-card">
-  <nav class="pb-16">
-    <router-link id="nav-router" to="/dashboard">Dashboard</router-link>
-  </nav>
+<!--  <nav class="pb-16">-->
+<!--    <router-link id="nav-router" to="/dashboard">Dashboard</router-link>-->
+<!--  </nav>-->
 
   <div class="search-container">
     <div class="field is-grouped">
