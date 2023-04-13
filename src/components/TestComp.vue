@@ -27,7 +27,6 @@
 
 // import {onMounted, ref} from "vue";
 
-import {} from "vue";
 
 export default {
   name: "TestComp",
@@ -35,7 +34,7 @@ export default {
     test: Object,
   },
   data(){
-    console.log(this.test);
+    // console.log(this.test);
   },
   // setup(props){
   //   const test = ref();

@@ -35,6 +35,7 @@ export default {
         await updateDoc(doc(db,toRaw(this.pickedAnswer).path),{
               Clicks: increment(1)
             })
+        this.$emit('function-completed', this.question);
       }
     }
   },

@@ -36,6 +36,7 @@ export default {
             Clicks: increment(1)
           })
         })
+        this.$emit('function-completed', this.question);
       }
     }
   },

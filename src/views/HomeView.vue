@@ -299,11 +299,9 @@ function getTests() {
       });
       tests.value.push(testObj);
     })
-    console.log(tests)
-    console.log("1")
+    // console.log(tests)
   })
-  console.log(tests)
-  console.log("3")
+  // console.log(tests)
   return tests
 }
 
@@ -381,8 +379,7 @@ export default defineComponent({
     // author: test.data().Author,
     let tests = getTests();
     // tests.push();
-    console.log(tests);
-    console.log("4");
+    // console.log(tests);
 
     return {tests}
 
