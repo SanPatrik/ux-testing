@@ -61,23 +61,49 @@ export default defineComponent({
             this.test.questions.push({})
         },
         async createTest() {
+            //Test document
             const testRef = await doc(collection(db, "Tests"))
             await setDoc(doc(db, testRef.path), {
                 TestName: this.test.testName,
                 Author: doc(db, 'Authors', auth.currentUser.uid)
             })
 
+            //Question document
             for (const question of toRaw(this.test.questions)) {
                 const questionRef = await doc(collection(db, testRef.path + "/Questions"))
                 await setDoc(doc(db, questionRef.path), {
                     Question: question.value.questionName,
                     QuestionType: question.value.questionType
                 })
+                if (question.value.trees && question.value.questionType === "Cardsort"){
+                    const arrayOfTrees = [];
+                    for (const tree of toRaw(question.value.trees.value)) {
+                        const treeRef = await doc(collection(db, questionRef.path + "/Trees"))
+                        console.log(treeRef);
+                        arrayOfTrees.push(tree.value.name);
+                        await setDoc(doc(db, treeRef.path), {
+                            Name: tree.value.name,
+                        })
+                    }
+                    for (const answer of toRaw(question.value.answers.value)) {
+                        const answerRef = await doc(collection(db, questionRef.path + "/Answers"))
+                        console.log("Cardsort");
+                        console.log(answerRef);
+                        const insertionArray = [];
+                        arrayOfTrees.forEach((treeName) => {
+                            insertionArray.push({ [treeName]: 0 });
+                        });
+                        await setDoc(doc(db, answerRef.path), {
+                            Choice: answer.value.choice,
+                            Insertion: insertionArray,
+                        })
+                    }
+                }
+
+                //Answer document
                 if (question.value.questionType === "Radio" || question.value.questionType === "Multi"){
                     for (const answer of toRaw(question.value.answers.value)) {
                         const answerRef = await doc(collection(db, questionRef.path + "/Answers"))
-                        console.log("RADIO & MULTI :");
-                        console.log(answerRef);
                         await setDoc(doc(db, answerRef.path), {
                             Choice: answer.value.choice,
                             Clicks: answer.value.clicks,
@@ -93,6 +119,19 @@ export default defineComponent({
                         console.log("Image uploaded:", imageURL);
                         await setDoc(doc(db, answerRef.path), {
                             Url: imageURL,
+                        });
+                    }
+                }
+                else if (question.value.questionType === "Compare" ) {
+                    for (const answer of question.value.answers.value) {
+                        const answerRef = await doc(collection(db, questionRef.path + "/Answers"))
+                        const imageRef = storageRef(storage, `images/${answer.value.name}`);
+                        await uploadBytes(imageRef, answer.value);
+                        const imageURL = await getDownloadURL(imageRef);
+                        console.log("Image uploaded:", imageURL);
+                        await setDoc(doc(db, answerRef.path), {
+                            Url: imageURL,
+                            Clicks: 0,
                         });
                     }
                 }

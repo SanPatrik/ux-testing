@@ -32,7 +32,7 @@ import {db} from '@/firebase';
 import {collection, getDocs, getDoc} from 'firebase/firestore';
 // Components
 import FooterComp from "@/components/FooterComp";
-import TestComp from "@/components/TestComp";
+import TestComp from "@/components/HomViewTestComp.vue";
 
 // const documentPath = 'cities/LA';
 // // Add a new document in collection "cities"
@@ -41,10 +41,8 @@ import TestComp from "@/components/TestComp";
 //   state: "CA",
 //   country: "USA"
 // });
-
 // const docRef = doc(db, "cities", "LA");
 // //const docSnap = await getDoc(docRef);
-
 // // if (docSnap.exists()) {
 //   console.log("Document data:", getDoc(docRef));
 // // } else {
@@ -60,12 +58,10 @@ import TestComp from "@/components/TestComp";
 //   }
 //   return test1
 // }
-
 // async function queryAuthor(path) {
 //   console.log(path)
 //   return (await getDoc(path)).data();
 // }
-
 //
 // async function queryTests(){
 //   let array = [];

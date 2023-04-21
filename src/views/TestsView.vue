@@ -13,6 +13,8 @@
                         <MultiQuestion :key="question" :name="question" v-if="question.questionType === 'Multi'" :question="question" :isSubmitted="isSubmitted" @function-completed="onChildFunctionCompleted"></MultiQuestion>
                         <HeatmapQuestion :key="question" :name="question" v-if="question.questionType === 'Heatmap'" :question="question" :isSubmitted="isSubmitted" @function-completed="onChildFunctionCompleted"></HeatmapQuestion>
                         <TextFieldQuestion :key="question" :name="question" v-if="question.questionType === 'Textfield'" :question="question" :isSubmitted="isSubmitted" @function-completed="onChildFunctionCompleted"></TextFieldQuestion>
+                        <CompareQuestion :key="question" :name="question" v-if="question.questionType === 'Compare'" :question="question" :isSubmitted="isSubmitted" @function-completed="onChildFunctionCompleted"></CompareQuestion>
+                        <CardsortQuestion :key="question" :name="question" v-if="question.questionType === 'Cardsort'" :question="question" :isSubmitted="isSubmitted" @function-completed="onChildFunctionCompleted"></CardsortQuestion>
                     </div>
                 </div>
             </div>
@@ -29,7 +31,9 @@ import MultiQuestion from "@/components/MultiQuestion.vue";
 import RadioQuestion from "@/components/RadioQuestion.vue";
 import HeatmapQuestion from "@/components/HeatmapQuestion.vue";
 import router from "@/router";
-import TextFieldQuestion from "@/components/TextFieldQuestion.vue";
+import TextFieldQuestion from "@/components/TextfieldQuestion.vue";
+import CompareQuestion from "@/components/CompareQuestion.vue";
+import CardsortQuestion from "@/components/CardsortQuestion.vue";
 
 function getQuestions(testId) {
     const questionsArray = ref([]);
@@ -39,6 +43,18 @@ function getQuestions(testId) {
                 id: question.id,
                 question: question.data().Question,
                 questionType: question.data().QuestionType,
+                trees: await getDocs(collection(db, question.ref.path + "/Trees")).then((trees) => {
+                    if (!trees) return null;
+                    const treesArray = ref([]);
+                    trees.forEach(tree => {
+                        const treeObj = reactive({
+                            ref: tree.ref,
+                            name: tree.data().Name,
+                        })
+                        treesArray.value.push(treeObj);
+                    })
+                    return treesArray;
+                }),
                 answers: await getDocs(collection(db, question.ref.path + "/Answers")).then((answers) => {
                     const answersArray = ref([]);
                     if (question.data().QuestionType === "Radio" || question.data().QuestionType === "Multi"){
@@ -60,11 +76,30 @@ function getQuestions(testId) {
                             answersArray.value.push(answerObj);
                         })
                     }
+                    else if (question.data().QuestionType === "Compare" ){
+                        answers.forEach(answer => {
+                            const answerObj = reactive({
+                                ref: answer.ref,
+                                url: answer.data().Url
+                            })
+                            answersArray.value.push(answerObj);
+                        })
+                    }
                     else if (question.data().QuestionType === "Textfield" ){
                         answers.forEach(answer => {
                             const answerObj = reactive({
                                 ref: answer.ref,
                                 answers: answer.data().Answers
+                            })
+                            answersArray.value.push(answerObj);
+                        })
+                    }
+                    else if (question.data().QuestionType === "Cardsort" ){
+                        answers.forEach(answer => {
+                            const answerObj = reactive({
+                                ref: answer.ref,
+                                choice: answer.data().Choice,
+                                insertion: answer.data().Insertion
                             })
                             answersArray.value.push(answerObj);
                         })
@@ -80,6 +115,8 @@ function getQuestions(testId) {
 
 export default {
     components: {
+        CardsortQuestion,
+        CompareQuestion,
         TextFieldQuestion,
         MultiQuestion,
         RadioQuestion,
