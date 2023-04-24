@@ -80,7 +80,7 @@ export default defineComponent({
                     for (const tree of toRaw(question.value.trees.value)) {
                         const treeRef = await doc(collection(db, questionRef.path + "/Trees"))
                         console.log(treeRef);
-                        arrayOfTrees.push(tree.value.name);
+                        arrayOfTrees.push(treeRef.id);
                         await setDoc(doc(db, treeRef.path), {
                             Name: tree.value.name,
                         })

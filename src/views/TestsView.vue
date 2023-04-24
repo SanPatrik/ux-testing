@@ -48,6 +48,7 @@ function getQuestions(testId) {
                     const treesArray = ref([]);
                     trees.forEach(tree => {
                         const treeObj = reactive({
+                            id: tree.id,
                             ref: tree.ref,
                             name: tree.data().Name,
                         })
@@ -97,6 +98,7 @@ function getQuestions(testId) {
                     else if (question.data().QuestionType === "Cardsort" ){
                         answers.forEach(answer => {
                             const answerObj = reactive({
+                                id: answer.id,
                                 ref: answer.ref,
                                 choice: answer.data().Choice,
                                 insertion: answer.data().Insertion
