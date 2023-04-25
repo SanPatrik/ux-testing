@@ -5,6 +5,7 @@ import CreateTest from "@/views/CreateTest.vue";
 import TestsView from "@/views/TestsView.vue";
 import SignIn from "@/views/SignIn.vue";
 import {auth} from "@/firebase";
+import StatisticsView from "@/views/StatisticsView.vue";
 
 const routes = [
   {
@@ -35,12 +36,20 @@ const routes = [
     props: true
   },
   {
+    path: '/statistics/:postId?:',
+    name: 'StatisticsView',
+    component: StatisticsView,
+    props: true,
+    meta: {
+      requiresAuth: true,
+    }
+  },
+  {
     path: '/signin',
     name: 'SignIn',
     component: SignIn,
   }
 ]
-
 
 const router = createRouter({
   history: createWebHashHistory(),

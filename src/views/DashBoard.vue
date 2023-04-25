@@ -5,7 +5,9 @@
       <h1 class="text-h4"><b>Dashboard</b></h1>
       <h2 class="text-h5">Welcome <b>{{user.displayName}}</b></h2>
     </header>
-
+      <router-link to="/create">
+          <button class="button is-primary rounded-pill m-3" >Create new Test</button>
+      </router-link>
     <div class="field is-grouped">
       <div class="control is-expanded">
         <input class="input" type="text" placeholder="Find a test">
@@ -17,21 +19,21 @@
       </div>
     </div>
 
-    <div>
-      $browse tests for statistics
-    </div>
+      <div v-for="test in tests" v-bind:key="test">
+          <StatsComp  class="mb-5" :test="test" ></StatsComp>
+      </div>
 
   </div>
-  <router-link to="/create">
-    <button class="button is-primary rounded-pill" >Create new Test</button>
-  </router-link>
+
   <FooterComp/>
 </template>
 
 <script>
-import {defineComponent} from 'vue';
-import {auth} from "@/firebase";
+import {defineComponent, reactive, ref} from 'vue';
+import {auth, db} from "@/firebase";
 import FooterComp from "@/components/FooterComp";
+import {collection, doc, getDoc, getDocs, query, where} from "firebase/firestore";
+import StatsComp from "@/components/StatsComp.vue";
 
 //import TestComp from "@/components/TestComp";
 //import {db} from '@/firebase';
@@ -55,19 +57,43 @@ import FooterComp from "@/components/FooterComp";
 // //   console.log("No such document!");
 // // }
 
+function getTests() {
+    const tests = ref([]);
+    const testsRef = collection(db, "Tests");
+    const authorRef = doc(db, 'Authors', auth.currentUser.uid);
+    const q = query(testsRef, where('Author', '==', authorRef));
 
+    getDocs(q).then(allTests => {
+        allTests.forEach( async test => {
+            const testObj = reactive({
+                id: test.id,
+                testName: test.data().TestName,
+                author: test.data().Author ? (await getDoc(test.data().Author).then((author) =>{
+                    return  reactive({
+                        id: author.id,
+                        username: author.data().Username,
+                        email: author.data().Email,
+                        password: author.data().Password,
+                    })
+                })) : ({username: "Unknown"}),
+            });
+            tests.value.push(testObj);
+        })
+    })
+    return tests
+}
 
 export default defineComponent({
   name: 'DashBoard',
 
   components: {
-    FooterComp,
-
+      StatsComp,
+      FooterComp,
   },
   setup(){
+      let tests = getTests();
+      return {tests}
   },
-
-
   data(){
     return{
         user: auth.currentUser

@@ -1,9 +1,14 @@
 <template>
-    <div>
-        <div class="columns is-mobile is-vcentered">
+    <div class="mt-5">
+        <div class="is-mobile is-vcentered">
             <div>
-                <label for="answer">Your answer:</label>
-                <input type="text" id="answer" v-model="answer" />
+<!--                <label for="answer">Your answer:</label>-->
+<!--                <input type="text" id="answer" v-model="answer" />-->
+                <v-text-field
+                              v-model="answer"
+                              label="Your answer:"
+                              placeholder="Answer"
+                ></v-text-field>
             </div>
         </div>
     </div>

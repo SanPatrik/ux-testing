@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="mt-5">
         <div class="columns is-mobile is-vcentered" v-for="answer in question.answers" v-bind:key="answer">
             <img :src="answer.url" alt="Image not loaded">
             <div>

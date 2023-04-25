@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="mt-5">
         <div class="columns is-mobile is-vcentered image-container" @click="getImageCoordinates">
             <img :src="question.answers[0].url" alt="Image not loaded">
             <div

@@ -9,12 +9,7 @@
                 <div class="card-content">
                     <p><b>{{ question.question }}</b></p>
                     <div class="content">
-                        <RadioQuestion :key="question" :name="question" v-if="question.questionType === 'Radio'" :question="question" :isSubmitted="isSubmitted" @function-completed="onChildFunctionCompleted"></RadioQuestion>
-                        <MultiQuestion :key="question" :name="question" v-if="question.questionType === 'Multi'" :question="question" :isSubmitted="isSubmitted" @function-completed="onChildFunctionCompleted"></MultiQuestion>
-                        <HeatmapQuestion :key="question" :name="question" v-if="question.questionType === 'Heatmap'" :question="question" :isSubmitted="isSubmitted" @function-completed="onChildFunctionCompleted"></HeatmapQuestion>
-                        <TextFieldQuestion :key="question" :name="question" v-if="question.questionType === 'Textfield'" :question="question" :isSubmitted="isSubmitted" @function-completed="onChildFunctionCompleted"></TextFieldQuestion>
-                        <CompareQuestion :key="question" :name="question" v-if="question.questionType === 'Compare'" :question="question" :isSubmitted="isSubmitted" @function-completed="onChildFunctionCompleted"></CompareQuestion>
-                        <CardsortQuestion :key="question" :name="question" v-if="question.questionType === 'Cardsort'" :question="question" :isSubmitted="isSubmitted" @function-completed="onChildFunctionCompleted"></CardsortQuestion>
+
                     </div>
                 </div>
             </div>
@@ -27,13 +22,8 @@
 import {computed, reactive, ref} from "vue";
 import {collection, getDocs} from "firebase/firestore";
 import {db} from "@/firebase";
-import MultiQuestion from "@/components/MultiQuestion.vue";
-import RadioQuestion from "@/components/RadioQuestion.vue";
-import HeatmapQuestion from "@/components/HeatmapQuestion.vue";
 import router from "@/router";
-import TextFieldQuestion from "@/components/TextfieldQuestion.vue";
-import CompareQuestion from "@/components/CompareQuestion.vue";
-import CardsortQuestion from "@/components/CardsortQuestion.vue";
+
 
 function getQuestions(testId) {
     const questionsArray = ref([]);
@@ -117,14 +107,9 @@ function getQuestions(testId) {
 
 export default {
     components: {
-        CardsortQuestion,
-        CompareQuestion,
-        TextFieldQuestion,
-        MultiQuestion,
-        RadioQuestion,
-        HeatmapQuestion
+
     },
-    name: "TestView",
+    name: "StatisticsView",
     props: {
         postId: String,
     },

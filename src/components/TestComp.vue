@@ -33,9 +33,9 @@ export default {
   props:{
     test: Object,
   },
-  data(){
-    // console.log(this.test);
-  },
+  // data(){
+  //   console.log(this.test);
+  // },
   // setup(props){
   //   const test = ref();
   //   onMounted(()=>{

@@ -32,7 +32,7 @@ import {db} from '@/firebase';
 import {collection, getDocs, getDoc} from 'firebase/firestore';
 // Components
 import FooterComp from "@/components/FooterComp";
-import TestComp from "@/components/HomViewTestComp.vue";
+import TestComp from "@/components/TestComp.vue";
 
 // const documentPath = 'cities/LA';
 // // Add a new document in collection "cities"
