@@ -12,11 +12,7 @@
 </template>
 
 <script>
-// import {updateDoc, increment, doc} from "firebase/firestore";
-// import {db} from "@/firebase";
-// import {toRaw} from "vue";
-
-import {doc, updateDoc, arrayUnion} from "firebase/firestore";
+import {doc, runTransaction} from "firebase/firestore";
 import {db} from "@/firebase";
 import {reactive, ref, toRaw} from "vue";
 
@@ -34,10 +30,11 @@ export default {
             const imageRect = event.target.getBoundingClientRect();
             const x = event.clientX - imageRect.left;
             const y = event.clientY - imageRect.top;
-
+            coordinates.x = x;
+            coordinates.y = y;
             // Normalize the coordinates
-            coordinates.x = x / imageRect.width;
-            coordinates.y = y / imageRect.height;
+            // coordinates.x = x / imageRect.width;
+            // coordinates.y = y / imageRect.height;
             // Show the circle effect
             showEffect.value = true;
             effectPosition.x = x;
@@ -54,9 +51,32 @@ export default {
     watch:{
         async isSubmitted(submitted){
             if(submitted){
-                await updateDoc(doc(db,toRaw(this.question.answers[0].ref).path),{
-                    Coordinates: arrayUnion({ x:this.coordinates.x, y:this.coordinates.y })
-                })
+                const questionRef = doc(db, toRaw(this.question.answers[0].ref).path);
+
+                await runTransaction(db, async (transaction) => {
+                    const questionSnap = await transaction.get(questionRef);
+
+                    let coordinates = questionSnap.get('Coordinates') || [];
+
+                    const existingIndex = coordinates.findIndex(
+                        (point) => point.x === this.coordinates.x && point.y === this.coordinates.y
+                    );
+
+                    if (existingIndex !== -1) {
+                        // Increment the "value" by 1
+                        coordinates[existingIndex].value += 1;
+                    } else {
+                        // Add a new object to the array
+                        coordinates.push({ x: this.coordinates.x, y: this.coordinates.y, value: 1 });
+                    }
+
+                    // Update the document with the new coordinates array
+                    transaction.set(questionRef, { Coordinates: coordinates }, { merge: true });
+                });
+
+                // await updateDoc(doc(db,toRaw(this.question.answers[0].ref).path),{
+                //     Coordinates: arrayUnion({ x:this.coordinates.x, y:this.coordinates.y, value: 1})
+                // })
                 this.$emit('function-completed', this.question);
             }
         }

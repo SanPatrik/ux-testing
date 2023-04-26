@@ -9,7 +9,9 @@
                 <div class="card-content">
                     <p><b>{{ question.question }}</b></p>
                     <div class="content">
-
+                        <PieChart v-if="question.questionType === 'Radio' || question.questionType === 'Multi'" :question="question" ></PieChart>
+                        <HeatmapChart v-if="question.questionType === 'Heatmap'" :question="question" ></HeatmapChart>
+                        <FreeAnswerChart v-if="question.questionType === 'Textfield'" :question="question" ></FreeAnswerChart>
                     </div>
                 </div>
             </div>
@@ -23,6 +25,9 @@ import {computed, reactive, ref} from "vue";
 import {collection, getDocs} from "firebase/firestore";
 import {db} from "@/firebase";
 import router from "@/router";
+import PieChart from "@/components/PieChart.vue";
+import HeatmapChart from "@/components/HeatmapChart.vue";
+import FreeAnswerChart from "@/components/FreeAnswerChart.vue";
 
 
 function getQuestions(testId) {
@@ -62,7 +67,8 @@ function getQuestions(testId) {
                         answers.forEach(answer => {
                             const answerObj = reactive({
                                 ref: answer.ref,
-                                url: answer.data().Url
+                                url: answer.data().Url,
+                                coordinates: answer.data().Coordinates
                             })
                             answersArray.value.push(answerObj);
                         })
@@ -107,6 +113,9 @@ function getQuestions(testId) {
 
 export default {
     components: {
+        FreeAnswerChart,
+        HeatmapChart,
+        PieChart,
 
     },
     name: "StatisticsView",
@@ -143,9 +152,6 @@ export default {
         }
 
         return {questions, isSubmitted, onChildFunctionCompleted, waitForAllChildren};
-    },
-    data() {
-
     },
     methods: {
         async submitTest() {
