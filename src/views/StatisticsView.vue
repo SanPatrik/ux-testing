@@ -12,6 +12,8 @@
                         <PieChart v-if="question.questionType === 'Radio' || question.questionType === 'Multi'" :question="question" ></PieChart>
                         <HeatmapChart v-if="question.questionType === 'Heatmap'" :question="question" ></HeatmapChart>
                         <FreeAnswerChart v-if="question.questionType === 'Textfield'" :question="question" ></FreeAnswerChart>
+                        <HorizontalBarChart v-if="question.questionType === 'Compare'" :question="question" ></HorizontalBarChart>
+                        <SpreadsheetChart v-if="question.questionType === 'Cardsort'" :question="question" ></SpreadsheetChart>
                     </div>
                 </div>
             </div>
@@ -28,6 +30,8 @@ import router from "@/router";
 import PieChart from "@/components/PieChart.vue";
 import HeatmapChart from "@/components/HeatmapChart.vue";
 import FreeAnswerChart from "@/components/FreeAnswerChart.vue";
+import HorizontalBarChart from "@/components/HorizontalBarChart.vue";
+import SpreadsheetChart from "@/components/SpreadsheetChart.vue";
 
 
 function getQuestions(testId) {
@@ -77,7 +81,8 @@ function getQuestions(testId) {
                         answers.forEach(answer => {
                             const answerObj = reactive({
                                 ref: answer.ref,
-                                url: answer.data().Url
+                                url: answer.data().Url,
+                                clicks: answer.data().Clicks
                             })
                             answersArray.value.push(answerObj);
                         })
@@ -113,6 +118,8 @@ function getQuestions(testId) {
 
 export default {
     components: {
+        SpreadsheetChart,
+        HorizontalBarChart,
         FreeAnswerChart,
         HeatmapChart,
         PieChart,
