@@ -13,7 +13,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="answer in question.answers" v-bind:key="answer">
+                <tr v-for="answer in sortedInsertions" v-bind:key="answer">
                     <td class="align-self-auto"><b>{{ answer.choice }}</b></td>
                     <td v-for="insert in answer.insertion" v-bind:key="insert">{{ Object.values(insert)[0] }}</td>
                 </tr>
@@ -25,22 +25,29 @@
 
 <script>
 
-
-
-import {toRaw} from "vue";
-
 export default {
     name: "SpreadsheetChart",
     props:{
         question: Object,
         isSubmitted: Boolean
     },
-    setup(props){
-        console.log("Cardsort");
-        console.log(toRaw(props.question));
-
-
-        return {}
+    setup(){
+    },
+    computed: {
+        sortedInsertions() {
+            return this.question.answers.map(answer => {
+                return {
+                    ...answer,
+                    insertion: answer.insertion.sort((a, b) => {
+                        const aId = Object.keys(a)[0];
+                        const bId = Object.keys(b)[0];
+                        const aIndex = this.question.trees.findIndex(tree => tree.id === aId);
+                        const bIndex = this.question.trees.findIndex(tree => tree.id === bId);
+                        return aIndex - bIndex;
+                    }),
+                };
+            });
+        },
     },
 }
 </script>

@@ -30,8 +30,8 @@ export default {
             const imageRect = event.target.getBoundingClientRect();
             const x = event.clientX - imageRect.left;
             const y = event.clientY - imageRect.top;
-            coordinates.x = x;
-            coordinates.y = y;
+            coordinates.x = Math.floor(x);
+            coordinates.y = Math.floor(y);
             // Normalize the coordinates
             // coordinates.x = x / imageRect.width;
             // coordinates.y = y / imageRect.height;
