@@ -21,6 +21,7 @@
         </form>
         <button :disabled="isSubmitted" class="button is-primary rounded-pill" @click="submitTest()">Submit</button>
     </section>
+    <FooterComp/>
 </template>
 
 <script>
@@ -34,6 +35,7 @@ import router from "@/router";
 import TextFieldQuestion from "@/components/TextfieldQuestion.vue";
 import CompareQuestion from "@/components/CompareQuestion.vue";
 import CardsortQuestion from "@/components/CardsortQuestion.vue";
+import FooterComp from "@/components/FooterComp.vue";
 
 function getQuestions(testId) {
     const questionsArray = ref([]);
@@ -117,6 +119,7 @@ function getQuestions(testId) {
 
 export default {
     components: {
+        FooterComp,
         CardsortQuestion,
         CompareQuestion,
         TextFieldQuestion,

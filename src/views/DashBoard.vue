@@ -8,16 +8,16 @@
       <router-link to="/create">
           <button class="button is-primary rounded-pill m-3" >Create new Test</button>
       </router-link>
-    <div class="field is-grouped">
-      <div class="control is-expanded">
-        <input class="input" type="text" placeholder="Find a test">
-      </div>
-      <div class="control">
-        <a class="button is-info">
-          Search
-        </a>
-      </div>
-    </div>
+<!--    <div class="field is-grouped">-->
+<!--      <div class="control is-expanded">-->
+<!--        <input class="input" type="text" placeholder="Find a test">-->
+<!--      </div>-->
+<!--      <div class="control">-->
+<!--        <a class="button is-info">-->
+<!--          Search-->
+<!--        </a>-->
+<!--      </div>-->
+<!--    </div>-->
 
       <div v-for="test in tests" v-bind:key="test">
           <StatsComp  class="mb-5" :test="test" ></StatsComp>

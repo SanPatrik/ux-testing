@@ -18,8 +18,9 @@
                 </div>
             </div>
         </form>
-        <button :disabled="isSubmitted" class="button is-primary rounded-pill" @click="submitTest()">Submit</button>
+<!--        <button :disabled="isSubmitted" class="button is-primary rounded-pill" @click="submitTest()">Submit</button>-->
     </section>
+    <FooterComp/>
 </template>
 
 <script>
@@ -32,6 +33,7 @@ import HeatmapChart from "@/components/HeatmapChart.vue";
 import FreeAnswerChart from "@/components/FreeAnswerChart.vue";
 import HorizontalBarChart from "@/components/HorizontalBarChart.vue";
 import SpreadsheetChart from "@/components/SpreadsheetChart.vue";
+import FooterComp from "@/components/FooterComp.vue";
 
 
 function getQuestions(testId) {
@@ -118,6 +120,7 @@ function getQuestions(testId) {
 
 export default {
     components: {
+        FooterComp,
         SpreadsheetChart,
         HorizontalBarChart,
         FreeAnswerChart,

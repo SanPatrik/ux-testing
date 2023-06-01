@@ -5,16 +5,16 @@
 <!--  </nav>-->
 
   <div class="search-container">
-    <div class="field is-grouped">
-      <div class="control is-expanded">
-        <input class="input" type="text" placeholder="Find a test">
-      </div>
-      <div class="control">
-        <a class="button is-info">
-          Search
-        </a>
-      </div>
-    </div>
+<!--    <div class="field is-grouped">-->
+<!--      <div class="control is-expanded">-->
+<!--        <input class="input" type="text" placeholder="Find a test">-->
+<!--      </div>-->
+<!--      <div class="control">-->
+<!--        <a class="button is-info">-->
+<!--          Search-->
+<!--        </a>-->
+<!--      </div>-->
+<!--    </div>-->
 <!--    <div>{{tests[0]}}</div>-->
     <div v-for="test in tests" v-bind:key="test">
       <TestComp  class="mb-5" :test="test" ></TestComp>

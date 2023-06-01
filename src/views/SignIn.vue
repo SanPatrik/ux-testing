@@ -4,29 +4,30 @@
         <div class="card">
             <div class="card-content">
                 <div class="content">
-                    <div class="columns is-mobile is-vcentered">
+<!--                    <div class="columns is-mobile is-vcentered">-->
 
-                        <div class="column has-text-left">
-                            <div><b>Username</b></div>
-                            <div><b>Email</b></div>
-                            <div><b>Password</b></div>
-                        </div>
+<!--                        <div class="column has-text-left">-->
+<!--                            <div><b>Username</b></div>-->
+<!--                            <div><b>Email</b></div>-->
+<!--                            <div><b>Password</b></div>-->
+<!--                        </div>-->
 
-                        <div class="column has-text-right is-5">
+<!--                        <div class="column has-text-right is-5">-->
 
-                        </div>
+<!--                        </div>-->
 
 
 
-                    </div>
+<!--                    </div>-->
                     <v-layout row wrap class="is-align-items-center">
                             <v-divider></v-divider>
-                            <span class="mx-2">or</span>
+                            <span class="mx-2 w-66">Google SignIn</span>
                             <v-divider></v-divider>
                     </v-layout>
                     <button @click="bounce(); googleSignIn()" :class="{ bounce: isBouncing }">
                         <svg-icon type="mdi" :path="path"></svg-icon>
                     </button>
+                    <v-divider></v-divider>
                 </div>
             </div>
         </div>
