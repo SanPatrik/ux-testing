@@ -1,5 +1,11 @@
 # ux-testing-v3
 
+## Website is deployed on this URL
+```
+https://ux-testing-3b14b.web.app
+```
+
+
 ## Project setup
 ```
 npm install
